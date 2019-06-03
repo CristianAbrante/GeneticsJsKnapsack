@@ -4,9 +4,19 @@ import { KnapsackItem } from "./App";
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
-import { Fab } from "@material-ui/core";
+import { Fab, Theme, WithStyles, withStyles } from "@material-ui/core";
 
-interface KnapsackItemFormProps {
+const styles = (theme: Theme) => ({
+  form: {
+    display: "flex",
+    alignItems: "center"
+  },
+  field: {
+    margin: theme.spacing(1)
+  }
+});
+
+interface KnapsackItemFormProps extends WithStyles<typeof styles> {
   onSubmit: (item: KnapsackItem) => any;
   isDisabled: boolean;
 }
@@ -25,8 +35,9 @@ const KnapsackItemForm = (props: KnapsackItemFormProps) => (
     }}
     validationSchema={knapsackItemValidationSchema}
     render={() => (
-      <Form>
+      <Form className={props.classes.form}>
         <Field
+          className={props.classes.field}
           name="weight"
           label="weight"
           type="number"
@@ -35,6 +46,7 @@ const KnapsackItemForm = (props: KnapsackItemFormProps) => (
           variant="outlined"
         />
         <Field
+          className={props.classes.field}
           name="value"
           label="value"
           type="number"
@@ -55,4 +67,4 @@ const KnapsackItemForm = (props: KnapsackItemFormProps) => (
   />
 );
 
-export default KnapsackItemForm;
+export default withStyles(styles)(KnapsackItemForm);

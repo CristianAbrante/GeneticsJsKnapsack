@@ -5,23 +5,30 @@ import {
   WithStyles,
   withStyles,
   Typography,
-  Divider
+  Divider,
+  Theme
 } from "@material-ui/core";
 import "./App.css";
 import KnapsackItemForm from "./KnapsackItemForm";
 import KnapsackItemCard from "./KnapsackItemCard";
 import Generator from "genetics-js/lib/lib/generator/utils/Generator";
 import { NumericRange } from "genetics-js/lib/lib/individual/numeric/base";
+import KnapsackCapacityForm from "./KnapsackCapacityForm";
 
-const styles = {
+const styles = (theme: Theme) => ({
   title: {
     margin: 10
   },
   container: {
     maxWidth: 1000,
     margin: "auto"
+  },
+  knapsackFormContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: theme.spacing(3)
   }
-};
+});
 
 export interface KnapsackItem {
   value: number;
@@ -29,7 +36,7 @@ export interface KnapsackItem {
 }
 
 interface State {
-  maxWeight: number;
+  capacity: number;
   items: KnapsackItem[];
 }
 
@@ -42,7 +49,7 @@ class App extends React.Component<WithStyles<typeof styles>, State> {
   constructor(props: WithStyles<typeof styles>) {
     super(props);
     this.state = {
-      maxWeight: this.INITIAL_CAPACITY,
+      capacity: this.INITIAL_CAPACITY,
       items: this.createRandomItems()
     };
   }
@@ -78,6 +85,8 @@ class App extends React.Component<WithStyles<typeof styles>, State> {
 
   isItemDisabled = () => this.state.items.length >= this.MAX_ITEMS;
 
+  onCapacityChange = (capacity: number) => this.setState({ capacity });
+
   render() {
     return (
       <div className={this.props.classes.container}>
@@ -97,10 +106,14 @@ class App extends React.Component<WithStyles<typeof styles>, State> {
             ))}
           </div>
         </Paper>
-        <Paper>
+        <Paper className={this.props.classes.knapsackFormContainer}>
           <KnapsackItemForm
             onSubmit={this.onAddKnapsackItem}
             isDisabled={this.isItemDisabled()}
+          />
+          <KnapsackCapacityForm
+            capacity={this.state.capacity}
+            onSubmit={this.onCapacityChange}
           />
         </Paper>
       </div>
