@@ -4744,10 +4744,10 @@ gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
-genetics-js@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/genetics-js/-/genetics-js-0.2.1.tgz#fd063b47d2ac19b1eac6d8042b1fbb6244dc3e16"
-  integrity sha512-HRddO0qjXc95gsN/Tw7JX1KnO/noUp4uR5umQ5jPmKDcoc5p/1tGtrdbkTjgmrYUSitoZFZIebfnNNWsp3dvCw==
+genetics-js@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/genetics-js/-/genetics-js-0.2.2.tgz#74b198f616a917e6f1d5051738993ccaa20fb58c"
+  integrity sha512-Yxhu7c2mQZPHocJ8hKRbE5og+37v3MbvhAnHYqRlJH4fC3eTMke7jBI8JV9uGfLjkZAo1C1L7geeCu0BnJBzzQ==
   dependencies:
     random-js "^2.0.0"
     ts-gaussian "^1.2.1"
