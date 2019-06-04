@@ -1,23 +1,73 @@
 import React from "react";
 
 import {
-  Paper,
   WithStyles,
   withStyles,
+  Theme,
+  Paper,
+  Fab,
   Typography,
-  Divider,
-  Theme
+  createMuiTheme,
+  CssBaseline
 } from "@material-ui/core";
 import "./App.css";
-import KnapsackItemForm from "./KnapsackItemForm";
-import KnapsackItemCard from "./KnapsackItemCard";
-import Generator from "genetics-js/lib/lib/generator/utils/Generator";
-import { NumericRange } from "genetics-js/lib/lib/individual/numeric/base";
-import KnapsackCapacityForm from "./KnapsackCapacityForm";
+
+import {
+  KnapsackParameters,
+  defaultKnapsackParameters
+} from "./params/KnapsackParams";
+
+import {
+  KnapsackItem,
+  getRandomItems,
+  NUMBER_OF_ITEMS_BOUNDS
+} from "./params/KnapsackItem";
+
+import {
+  AlgorithmParameters,
+  defaultAlgorithmParameters
+} from "./params/AlgorithmParams";
+
+import KnapsackForm from "./knapsack/KnapsackForm";
+import AlgorithmParametersForm from "./algorithm/AlgorithmParametersForm";
+import AlgorithmExecution from "./algorithm-execution/AlgorithmExecution";
+import Logo from "./images/logo-letters.png";
+import { ThemeProvider } from "@material-ui/styles";
+
+const customTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#356759",
+      light: "#F2F5DF",
+      dark: "#38966F"
+    },
+    secondary: {
+      main: "#F15324"
+    },
+    background: {
+      default: "#DEF3E5",
+      paper: "#FEFBE6"
+    },
+    divider: "#38966F"
+  }
+});
 
 const styles = (theme: Theme) => ({
+  logoContainer: {
+    margin: "auto"
+  },
+  logo: {
+    display: "block",
+    margin: "auto",
+    width: 300
+  },
+  logoTitle: {
+    display: "flex",
+    justifyContent: "center"
+  },
   title: {
-    margin: 10
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   },
   container: {
     maxWidth: 1000,
@@ -27,47 +77,31 @@ const styles = (theme: Theme) => ({
     display: "flex",
     justifyContent: "space-between",
     padding: theme.spacing(3)
+  },
+  actionButtonContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: theme.spacing(1),
+    padding: theme.spacing(1)
   }
 });
 
-export interface KnapsackItem {
-  value: number;
-  weight: number;
-}
-
 interface State {
-  capacity: number;
+  knapsackParams: KnapsackParameters;
   items: KnapsackItem[];
+  algorithmParams: AlgorithmParameters;
+  algorithmIsExecuting: boolean;
 }
 
 class App extends React.Component<WithStyles<typeof styles>, State> {
-  readonly MAX_ITEMS = 15;
-  readonly NUMBER_OF_INITIAL_ITEMS = 14;
-  readonly INITIAL_CAPACITY = 20.0;
-  readonly INITIAL_MAX_VALUE = 100;
+  getDefaultState = () => ({
+    knapsackParams: defaultKnapsackParameters,
+    items: getRandomItems(),
+    algorithmParams: defaultAlgorithmParameters,
+    algorithmIsExecuting: false
+  });
 
-  constructor(props: WithStyles<typeof styles>) {
-    super(props);
-    this.state = {
-      capacity: this.INITIAL_CAPACITY,
-      items: this.createRandomItems()
-    };
-  }
-
-  createRandomItems = (): KnapsackItem[] => {
-    const randomItems: KnapsackItem[] = [];
-    for (let i = 0; i < this.NUMBER_OF_INITIAL_ITEMS; i++) {
-      randomItems.push({
-        value: Generator.generateFloating(
-          new NumericRange(0.0, this.INITIAL_MAX_VALUE)
-        ),
-        weight: Generator.generateFloating(
-          new NumericRange(0.0, this.INITIAL_CAPACITY)
-        )
-      });
-    }
-    return randomItems;
-  };
+  state = this.getDefaultState();
 
   onAddKnapsackItem = (item: KnapsackItem) => {
     this.setState(state => {
@@ -83,40 +117,84 @@ class App extends React.Component<WithStyles<typeof styles>, State> {
     });
   };
 
-  isItemDisabled = () => this.state.items.length >= this.MAX_ITEMS;
+  onKnapsackParamsChange = (knapsackParams: KnapsackParameters) =>
+    this.setState({ knapsackParams });
 
-  onCapacityChange = (capacity: number) => this.setState({ capacity });
+  isAddItemDisabled = () =>
+    this.state.items.length >= NUMBER_OF_ITEMS_BOUNDS.max;
+
+  isDeleteItemDisabled = () =>
+    this.state.items.length <= NUMBER_OF_ITEMS_BOUNDS.min;
+
+  onAlgorithmParamsChange = (algorithmParams: AlgorithmParameters) => {
+    console.log(algorithmParams);
+    this.setState({ algorithmParams });
+  };
+
+  onExecuteAlgorithmPlay = () => {
+    const { algorithmIsExecuting } = this.state;
+    if (algorithmIsExecuting) {
+      this.setState(state => this.getDefaultState());
+    } else {
+      this.setState({ algorithmIsExecuting: true });
+    }
+  };
 
   render() {
     return (
-      <div className={this.props.classes.container}>
-        <Paper>
-          <Typography className={this.props.classes.title} variant="h6">
-            Knapsack Items
-          </Typography>
-          <Divider />
-          <div className="items-container">
-            {this.state.items.map((item, key) => (
-              <KnapsackItemCard
-                key={key}
-                index={key}
-                item={item}
-                onDeleteItem={this.onDeleteKnapsackItem}
+      <ThemeProvider theme={customTheme}>
+        <CssBaseline />
+        <div className={this.props.classes.container}>
+          <Paper className={this.props.classes.title}>
+            <div className={this.props.classes.logoContainer}>
+              <img
+                className={this.props.classes.logo}
+                src={Logo}
+                alt="geneticsjs"
               />
-            ))}
-          </div>
-        </Paper>
-        <Paper className={this.props.classes.knapsackFormContainer}>
-          <KnapsackItemForm
-            onSubmit={this.onAddKnapsackItem}
-            isDisabled={this.isItemDisabled()}
-          />
-          <KnapsackCapacityForm
-            capacity={this.state.capacity}
-            onSubmit={this.onCapacityChange}
-          />
-        </Paper>
-      </div>
+            </div>
+            <div className={this.props.classes.logoTitle}>
+              <Typography variant="h6" color="primary">
+                Knapsack problem simulator with genetic algorithms
+              </Typography>
+            </div>
+          </Paper>
+          {!this.state.algorithmIsExecuting && (
+            <React.Fragment>
+              <KnapsackForm
+                items={this.state.items}
+                knapsackParams={this.state.knapsackParams}
+                addDisabled={this.isAddItemDisabled()}
+                deleteDisabled={this.isDeleteItemDisabled()}
+                onAddItem={this.onAddKnapsackItem}
+                onDeleteItem={this.onDeleteKnapsackItem}
+                onKnapsackParamsChange={this.onKnapsackParamsChange}
+              />
+              <AlgorithmParametersForm
+                numberOfItems={this.state.items.length}
+                algorithmParams={this.state.algorithmParams}
+                onSubmit={this.onAlgorithmParamsChange}
+              />
+            </React.Fragment>
+          )}
+          {this.state.algorithmIsExecuting && (
+            <AlgorithmExecution
+              knapsackParams={this.state.knapsackParams}
+              algorithmParams={this.state.algorithmParams}
+              items={this.state.items}
+            />
+          )}
+          <Paper className={this.props.classes.actionButtonContainer}>
+            <Fab
+              variant="extended"
+              color={this.state.algorithmIsExecuting ? "secondary" : "primary"}
+              onClick={this.onExecuteAlgorithmPlay}
+            >
+              {this.state.algorithmIsExecuting ? "Reset" : "execute algorithm"}
+            </Fab>
+          </Paper>
+        </div>
+      </ThemeProvider>
     );
   }
 }
