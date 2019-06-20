@@ -86,7 +86,7 @@ const AlgorithmParametersForm = (props: AlgorithmParametersFormProps) => {
             >
               <option value="nPoints">N points crossover</option>
               <option value="onePoint">One point crossover</option>
-              <option value="uniform">Unifrom crossover</option>
+              <option value="uniform">Uniform crossover</option>
             </Field>
             {values.crossoverType === "nPoints" && (
               <Field
