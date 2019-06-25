@@ -2,6 +2,8 @@
 
 Web application for solving the **knapsack problem** using a *genetic algorithm*, provided by [GeneticsJS](https://github.com/CristianAbrante/GeneticsJS).
 
+![screenshot](https://github.com/CristianAbrante/GeneticsJsKnapsack/blob/master/assets/geneticknapsack.gif?raw=true)
+
 ## Check out the web!
 The web is deployed and tested on Chrome.
 
